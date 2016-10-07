@@ -24,7 +24,7 @@ public class PlayerControl : MonoBehaviour {
 
 
 		Vector3 movement = new Vector3(moveHorizontal, 0.0f, 0.0f);
-		print (movement);
+		//print (movement);
 
 		rigid.AddForce(movement * speed * Time.deltaTime, ForceMode.Impulse);
 
@@ -37,11 +37,15 @@ public class PlayerControl : MonoBehaviour {
 
 	void OnCollisionStay (Collision collisionInfo)
 	{
-		IsGrounded = true;  
+		if(collisionInfo.gameObject.name == "Floor"){
+			IsGrounded = true;  
+		}
 	}
 
 	void OnCollisionExit (Collision collisionInfo)
 	{
-		IsGrounded = false;
+		if(collisionInfo.gameObject.name == "Floor"){
+			IsGrounded = false;
+		}
 	}
 }
