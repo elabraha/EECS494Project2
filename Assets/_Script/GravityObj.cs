@@ -25,13 +25,13 @@ public class GravityObj : MonoBehaviour {
 
 	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Player") {
-			Player.S.rigid.AddForce (GravityCoefficient * gravityDirection, ForceMode.Force);
+			PlayerControl.S.GetComponent<Rigidbody>().AddForce (GravityCoefficient * gravityDirection, ForceMode.Force);
 		}
 	}
 
 	void OnTriggerStay(Collider other){
 		if (other.gameObject.tag == "Player") {
-			Player.S.rigid.AddForce (GravityCoefficient * gravityDirection, ForceMode.Force);
+			PlayerControl.S.GetComponent<Rigidbody>().AddForce (GravityCoefficient * gravityDirection, ForceMode.Force);
 		}
 	}
 
