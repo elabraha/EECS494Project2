@@ -46,6 +46,10 @@ public class PlayerControl : MonoBehaviour {
 			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
 		}
 
+		if (Input.GetKey (KeyCode.C)) {
+			transform.position = new Vector3 (0, 21, 0);
+		}
+
 		//jumping = false;
 	}
 
