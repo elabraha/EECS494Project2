@@ -35,6 +35,7 @@ public class PlayerControl : MonoBehaviour {
 		//print (movement);
 		if(Input.GetKey(KeyCode.LeftShift)){
 			rigid.velocity = Vector3.zero;
+			rigid.angularVelocity = Vector3.zero;
 		}
 		else{
 			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
