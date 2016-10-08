@@ -9,9 +9,14 @@ public class PlayerControl : MonoBehaviour {
 	public float jumpspeed = 10000.0f;
 	public bool IsGrounded = true;
 	// Use this for initialization
-	void Start () {
+
+	void Awake(){
 		S = this;
 		rigid = GetComponent<Rigidbody> ();
+	}
+
+	void Start () {
+		
 	}
 
 	void FixedUpdate () {
@@ -28,14 +33,19 @@ public class PlayerControl : MonoBehaviour {
 		Vector3 movementVertical = new Vector3(0.0f, 0.0f, moveVertical);
 
 		//print (movement);
-
-		rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
-		rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
+		if(Input.GetKey(KeyCode.LeftShift)){
+			rigid.velocity = Vector3.zero;
+		}
+		else{
+			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
+			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
+		}
 
 		if (Input.GetKeyDown (KeyCode.Space) && IsGrounded) {
 			Vector3 jump = Vector3.up;
 			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
 		}
+
 		//jumping = false;
 	}
 
