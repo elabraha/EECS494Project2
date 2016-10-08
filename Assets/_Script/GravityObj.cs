@@ -9,6 +9,7 @@ public class GravityObj : MonoBehaviour {
 	public Vector3 			size = new Vector3 (20, 2, 2);
 //	public float 			gravityBoundary = 5f;
 	public Vector3			gravityDirection; 
+	public bool 			isActive;
 	public bool 			____________;
 //	private float 			distToPlayer;
 
@@ -17,6 +18,9 @@ public class GravityObj : MonoBehaviour {
 		this.transform.localScale = size;
 		gravityDirection = gameObject.transform.rotation * Vector3.right;
 		//Debug.Log ("this object starts");
+		if (!isActive) {
+			gameObject.SetActive (false);
+		}
 	}
 	
 	// FixedUpdate is called once per frame
