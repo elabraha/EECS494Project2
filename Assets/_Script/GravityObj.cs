@@ -16,7 +16,7 @@ public class GravityObj : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		this.transform.localScale = size;
-		gravityDirection = gameObject.transform.rotation * Vector3.right;
+		gravityDirection = gameObject.transform.rotation * Vector3.up;
 		//Debug.Log ("this object starts");
 		if (!isActive) {
 			gameObject.SetActive (false);
@@ -29,7 +29,9 @@ public class GravityObj : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other){
+		
 		if (other.gameObject.name == "Player") {
+			Debug.Log ("Enter Gravity Fields");
 			PlayerControl.S.gameObject.GetComponent<Rigidbody>().AddForce (GravityCoefficient * gravityDirection * Time.deltaTime, ForceMode.Force);
 		}
 	}
