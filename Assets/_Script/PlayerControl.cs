@@ -8,6 +8,7 @@ public class PlayerControl : MonoBehaviour {
 	public static PlayerControl S;
 	public float jumpspeed = 10000.0f;
 	public bool IsGrounded = true;
+	public bool canWin;
 	// Use this for initialization
 
 	void Awake(){
@@ -48,7 +49,19 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		if (Input.GetKey (KeyCode.C)) {
-			transform.position = new Vector3 (0, 21, 0);
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			if (sceneName == "_Scene_1_Begin") {
+				transform.position = new Vector3 (0, 21, 0);
+			} else if (sceneName == "_Scene_1st_Level") {
+				transform.position = new Vector3 (72.65001f, 67.16783f, 50.40521f);
+			}
+		}
+
+		if (Input.GetKey (KeyCode.D)) {
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
+		}
+		if (Input.GetKey (KeyCode.F)) {
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
 		}
 
 		//jumping = false;
@@ -66,5 +79,9 @@ public class PlayerControl : MonoBehaviour {
 		if(collisionInfo.gameObject.tag == "Floor"){
 			IsGrounded = false;
 		}
+	}
+
+	public Rigidbody getRigidBody(){
+		return rigid;
 	}
 }
