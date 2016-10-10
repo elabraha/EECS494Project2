@@ -77,6 +77,12 @@ public class PlayerControl : MonoBehaviour {
 		//jumping = false;
 	}
 
+	void OnCollisionEnter(Collision collisionInfo) {
+		if (collisionInfo.gameObject.tag == "Fruit") {
+			Destroy (collisionInfo.gameObject);
+		}
+	}
+
 	void OnCollisionStay (Collision collisionInfo)
 	{
 		if(collisionInfo.gameObject.tag == "Floor"){
