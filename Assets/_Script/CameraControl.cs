@@ -10,6 +10,6 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void LateUpdate (){
-		transform.position = PlayerControl.S.gameObject.transform.position + relativePosition;
+		this.gameObject.transform.position = PlayerControl.S.gameObject.transform.position + relativePosition;
 	}
 }
