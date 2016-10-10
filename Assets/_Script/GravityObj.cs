@@ -15,7 +15,7 @@ public class GravityObj : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		this.transform.localScale = size;
+		//this.transform.localScale = size;
 		gravityDirection = gameObject.transform.rotation * Vector3.up;
 		//Debug.Log ("this object starts");
 		if (!isActive) {
