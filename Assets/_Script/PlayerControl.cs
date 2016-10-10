@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour {
 
 	private Rigidbody rigid;
-	public float speed = 10.0f;
+	public float speed = 20.0f;
 	public static PlayerControl S;
 	public float jumpspeed = 10000.0f;
 	public bool IsGrounded = true;
