@@ -22,6 +22,8 @@ public class PlayerControl : MonoBehaviour {
 	void Awake(){
 		S = this;
 		rigid = GetComponent<Rigidbody> ();
+		// POWER_UP : Set the Glowing object false
+		this.transform.FindChild ("Glow").gameObject.SetActive (false);
 	}
 
 	void Start () {
@@ -125,5 +127,7 @@ public class PlayerControl : MonoBehaviour {
 		isPowerUp = false;
 		PlayerControl.S.jumpspeed /= jumpForceFactor;
 		PlayerControl.S.speed /= speedFactor;
+		// POWER_UP : Set the Glowing object false
+		this.transform.FindChild ("Glow").gameObject.SetActive (false);
 	}
 }

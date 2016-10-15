@@ -28,6 +28,7 @@ public class PowerUp : MonoBehaviour {
 	}
 
 	public void enterPowerUp(){
+		PlayerControl.S.transform.FindChild ("Glow").gameObject.SetActive (true);
 		PlayerControl.S.powerUpStartTime = Time.time;
 		PlayerControl.S.isPowerUp = true;
 		PlayerControl.S.jumpspeed *= jumpForceFactor;
