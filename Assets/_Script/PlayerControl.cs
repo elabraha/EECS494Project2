@@ -9,6 +9,14 @@ public class PlayerControl : MonoBehaviour {
 	public float jumpspeed = 10000.0f;
 	public bool IsGrounded = true;
 	public bool canWin;
+
+	//POWER_UP : These are variables for powerUp
+	public bool isPowerUp = false;
+	public float powerUpStartTime;
+	public float powerUpDuration = 100f; // this may be more complicated later, but just assume a fixed duration first
+	public float speedFactor;
+	public float jumpForceFactor;
+
 	// Use this for initialization
 
 	void Awake(){
@@ -75,6 +83,16 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		//jumping = false;
+
+		// POWER_UP : Add some additional Gravity when power up
+		if(isPowerUp){
+			rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
+		}
+			
+		// POWER_UP : Exit if time is up
+		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUp){
+			exitPowerUp ();	
+		}
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
@@ -97,7 +115,15 @@ public class PlayerControl : MonoBehaviour {
 		}
 	}
 
+	//Here is some public/private functions 
 	public Rigidbody getRigidBody(){
 		return rigid;
+	}
+
+	//POWER_UP : When power up exits
+	public void exitPowerUp(){
+		isPowerUp = false;
+		PlayerControl.S.jumpspeed /= jumpForceFactor;
+		PlayerControl.S.speed /= speedFactor;
 	}
 }
