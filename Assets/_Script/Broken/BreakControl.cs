@@ -14,7 +14,7 @@ public class BreakControl : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision other){
-		if (other.gameObject.tag == "Player") {
+		if (other.gameObject.tag == "Player" || other.gameObject.tag == "Evil") {
 			this.transform.FindChild ("Cube").gameObject.SetActive (false);
 			Destroy (gameObject.GetComponent<BoxCollider> ());
 			foreach (Rigidbody rgd in gameObject.GetComponentsInChildren<Rigidbody>()) {

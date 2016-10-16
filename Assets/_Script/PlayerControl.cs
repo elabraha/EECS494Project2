@@ -112,8 +112,8 @@ public class PlayerControl : MonoBehaviour {
 			= this.gameObject.transform.position;
 		//TEST: this is just code for test
 		if(Input.GetKey(KeyCode.E)){
-			float _y = evil.gameObject.transform.position.y;
 			evil.SetActive(true);
+			float _y = evil.gameObject.transform.position.y;
 			evil.transform.position = new Vector3 (this.gameObject.transform.position.x, 
 													_y, this.transform.position.z);
 		}
@@ -121,7 +121,8 @@ public class PlayerControl : MonoBehaviour {
 		if (isBrokenByEvil) {
 			this.transform.position = evil.transform.position - new Vector3(0f, evilRadius * 20f, 0f);
 			if (Time.time - brokenBegin > brokenDuration) {
-				UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
+				string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+				UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 			}
 		}
 	}
@@ -178,7 +179,7 @@ public class PlayerControl : MonoBehaviour {
 			Destroy (this.gameObject.GetComponent<SphereCollider> ());
 			foreach (Rigidbody rgd in this.transform.parent.FindChild("brokenPlayer").gameObject.GetComponentsInChildren<Rigidbody>()) {
 				rgd.constraints = RigidbodyConstraints.None;
-				rgd.velocity = new Vector3 (Random.value * 24f - 12f, Random.value, Random.value* 24f - 12f);
+				rgd.velocity = new Vector3 (Random.value * 36f - 18f, Random.value, Random.value* 36f - 18f);
 			}
 		}
 	}
