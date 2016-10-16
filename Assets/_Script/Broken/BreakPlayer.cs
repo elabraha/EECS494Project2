@@ -12,6 +12,7 @@ public class BreakPlayer : MonoBehaviour {
 	}
 
 	void FixedUpdate(){
+		this.transform.position = this.transform.FindChild ("Player").gameObject.transform.position;
 		//TEST: this is just code for test
 		if(Input.GetKey(KeyCode.E)){
 			float _y = evil.gameObject.transform.position.y;
@@ -20,7 +21,7 @@ public class BreakPlayer : MonoBehaviour {
 		}
 	}
 
-	void OnCollisionEnter(Collision other){
+	void OnTriggerEnter(Collider other){
 		if (other.gameObject.tag == "Evil" 
 			&& other.gameObject.transform.position.y > this.transform.position.y) {
 			this.transform.FindChild ("brokenPlayer").gameObject.SetActive (true);
