@@ -10,12 +10,21 @@ public class PlayerControl : MonoBehaviour {
 	public bool IsGrounded = true;
 	public bool canWin;
 
+	//EVIL:
+	public GameObject evil;
+	private float evilRadius;
+
 	//POWER_UP : These are variables for powerUp
 	public bool isPowerUp = false;
 	public float powerUpStartTime;
 	public float powerUpDuration = 100f; // this may be more complicated later, but just assume a fixed duration first
 	public float speedFactor;
 	public float jumpForceFactor;
+
+	//EVIL:
+	private bool isBrokenByEvil;
+	private float brokenBegin;
+	private float brokenDuration = 2f;
 
 	// Use this for initialization
 
@@ -27,7 +36,11 @@ public class PlayerControl : MonoBehaviour {
 	}
 
 	void Start () {
-		
+		//TEST:
+		evil.SetActive(false);
+		evilRadius = evil.GetComponent<SphereCollider> ().radius;
+		this.transform.parent.FindChild ("brokenPlayer").gameObject.SetActive (false);
+		isBrokenByEvil = false;
 	}
 
 	void FixedUpdate () {
@@ -90,16 +103,38 @@ public class PlayerControl : MonoBehaviour {
 		if(isPowerUp){
 			rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
 		}
-			
 		// POWER_UP : Exit if time is up
 		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUp){
 			exitPowerUp ();	
+		}
+		//EVIL: 
+		this.transform.parent.FindChild("brokenPlayer").transform.position 
+			= this.gameObject.transform.position;
+		//TEST: this is just code for test
+		if(Input.GetKey(KeyCode.E)){
+			float _y = evil.gameObject.transform.position.y;
+			evil.SetActive(true);
+			evil.transform.position = new Vector3 (this.gameObject.transform.position.x, 
+													_y, this.transform.position.z);
+		}
+		//EVIL:
+		if (isBrokenByEvil) {
+			this.transform.position = evil.transform.position - new Vector3(0f, evilRadius * 20f, 0f);
+			if (Time.time - brokenBegin > brokenDuration) {
+				UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
+			}
 		}
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
 		if (collisionInfo.gameObject.tag == "Fruit") {
 			Destroy (collisionInfo.gameObject);
+		}
+
+		if (collisionInfo.gameObject.tag == "Evil") {
+			brokenBegin = Time.time;
+			isBrokenByEvil = true;
+			BrokenByEnemy (collisionInfo);
 		}
 	}
 
@@ -129,5 +164,22 @@ public class PlayerControl : MonoBehaviour {
 		PlayerControl.S.speed /= speedFactor;
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
+	}
+
+	public void BrokenByEnemy(Collision other){
+		if (other.gameObject.tag == "Evil" 
+			&& other.gameObject.transform.position.y > this.transform.position.y) {
+			float radius = evil.GetComponent<SphereCollider> ().radius;
+			this.transform.parent.FindChild ("brokenPlayer").gameObject.SetActive (true);
+			this.transform.parent.FindChild ("brokenPlayer").gameObject.transform.position 
+			= this.gameObject.transform.position;
+			this.gameObject.GetComponent<Rigidbody> ().constraints = RigidbodyConstraints.FreezeAll;
+			//this.gameObject.SetActive (false);
+			Destroy (this.gameObject.GetComponent<SphereCollider> ());
+			foreach (Rigidbody rgd in this.transform.parent.FindChild("brokenPlayer").gameObject.GetComponentsInChildren<Rigidbody>()) {
+				rgd.constraints = RigidbodyConstraints.None;
+				rgd.velocity = new Vector3 (Random.value * 24f - 12f, Random.value, Random.value* 24f - 12f);
+			}
+		}
 	}
 }
