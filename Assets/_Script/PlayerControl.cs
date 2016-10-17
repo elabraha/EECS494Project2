@@ -4,9 +4,9 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour {
 
 	private Rigidbody rigid;
-	public float speed = 500.0f;
+	public float speed = 200.0f;
 	public static PlayerControl S;
-	public float jumpspeed = 350000.0f;
+	public float jumpspeed = 15.0f;
 	public bool IsGrounded = true;
 	public bool canWin;
 
@@ -27,6 +27,7 @@ public class PlayerControl : MonoBehaviour {
 	private float brokenDuration = 2f;
 
 	bool jumWasPressed = false;
+	private const float BONUS_GRAV = 9.8f;
 	// Use this for initialization
 
 	void Awake(){
@@ -83,15 +84,22 @@ public class PlayerControl : MonoBehaviour {
 			jumWasPressed = false;
 		}
 
+		if (!IsGrounded) {
+			Vector3 vel = rigid.velocity;
+			vel.y-=BONUS_GRAV*Time.deltaTime;
+			rigid.velocity=vel;
+
+			//TO DO: figure out how to make this decrease forward force over time
+		}
+
 		if(Input.GetKey (KeyCode.Space) && !IsGrounded) {
 			jumWasPressed = true;
 		}
-
+		//FIX ME: make jumps faster
 		if ((Input.GetKeyDown (KeyCode.Space) || jumWasPressed) && IsGrounded) {
 			print ("bang bang");
 			Vector3 jump = Vector3.up;
-			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
-			jumWasPressed = false;
+			rigid.velocity += jump * jumpspeed;
 		}
 		//end jump code
 

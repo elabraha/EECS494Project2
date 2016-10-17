@@ -10,7 +10,7 @@ public class CameraControl : MonoBehaviour {
 	private float			sensitivityX = 4.0f;
 	private float			sensitivityY = 1.0f;
 	public static 			CameraControl C;
-	private const float 	Y_ANGLE_MIN = -25.0f;
+	private const float 	Y_ANGLE_MIN = -50.0f;
 	private const float 	Y_ANGLE_MAX = 25.0f;
 
 
