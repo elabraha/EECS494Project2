@@ -6,9 +6,10 @@ public class PlayerControl : MonoBehaviour {
 	private Rigidbody rigid;
 	public float speed = 200.0f;
 	public static PlayerControl S;
-	public float jumpspeed = 10000.0f;
+	public float jumpspeed = 200000.0f;
 	public bool IsGrounded = true;
 	public bool canWin;
+	bool jumWasPressed = false;
 	// Use this for initialization
 
 	void Awake(){
@@ -53,10 +54,22 @@ public class PlayerControl : MonoBehaviour {
 			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
 		}
 
-		if (Input.GetKeyDown (KeyCode.Space) && IsGrounded) {
+		//this is so you can hold don't down space and still jump
+
+		if(Input.GetKeyUp(KeyCode.Space)) {
+			jumWasPressed = false;
+		}
+
+		if(Input.GetKey (KeyCode.Space) && !IsGrounded) {
+			jumWasPressed = true;
+		}
+
+		if ((Input.GetKeyDown (KeyCode.Space) || jumWasPressed) && IsGrounded) {
 			Vector3 jump = Vector3.up;
 			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
+			jumWasPressed = false;
 		}
+		//end jump code
 
 		if (Input.GetKey (KeyCode.C)) {
 			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
@@ -67,7 +80,7 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKey (KeyCode.D)) {
+		if (Input.GetKey (KeyCode.R)) {
 			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
 		}
 		if (Input.GetKey (KeyCode.F)) {
