@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-// This is just a really basic moving boards
-public class MovingBoard : MonoBehaviour {
+public class MovingBoardX : MonoBehaviour {
 
 	public Quaternion		movingDirection = Quaternion.Euler(0,0,0);
 	public float 			movingSpeed = 2f;
@@ -22,15 +21,15 @@ public class MovingBoard : MonoBehaviour {
 		startPoint = gameObject.transform.position;
 		isGoBack = false;
 		if (isRight == true) {
-			directionCheck = movingDirection * Vector3.right;
+			directionCheck = movingDirection * Vector3.forward;
 		} else {
-			directionCheck = movingDirection * Vector3.left;
+			directionCheck = movingDirection * Vector3.back;
 		}
 		if (!isActive) {
 			gameObject.SetActive (false);
 		}
 	}
-	
+
 
 	void FixedUpdate () {
 		Vector3 distanceToStartVec = gameObject.transform.position - startPoint;
@@ -38,14 +37,15 @@ public class MovingBoard : MonoBehaviour {
 		rigid.velocity = directionCheck * movingSpeed;
 		if (distanceToStartVec.magnitude > movingRadius) {
 			if (!isGoBack && (directionCheck.x * distanceToStartVec.x 
-							+ directionCheck.y * distanceToStartVec.y 
-							+ directionCheck.z * distanceToStartVec.z >= 0f)
+				+ directionCheck.y * distanceToStartVec.y 
+				+ directionCheck.z * distanceToStartVec.z > 0f)
 				|| isGoBack && (directionCheck.x * distanceToStartVec.x 
-								+ directionCheck.y * distanceToStartVec.y 
-								+ directionCheck.z * distanceToStartVec.z < 0f)) {
+					+ directionCheck.y * distanceToStartVec.y 
+					+ directionCheck.z * distanceToStartVec.z < 0f)) {
 				movingSpeed *= -1;
 				isGoBack = !isGoBack;
 			}
 		}
 	}
+
 }
