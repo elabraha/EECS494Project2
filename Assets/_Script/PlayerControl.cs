@@ -4,9 +4,9 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour {
 
 	private Rigidbody rigid;
-	public float speed = 200.0f;
+	public float speed = 500.0f;
 	public static PlayerControl S;
-	public float jumpspeed = 200000.0f;
+	public float jumpspeed = 350000.0f;
 	public bool IsGrounded = true;
 	public bool canWin;
 	bool jumWasPressed = false;
@@ -51,7 +51,7 @@ public class PlayerControl : MonoBehaviour {
 		}
 		else{
 			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
-			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
+			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceModeImpulse);
 		}
 
 		//this is so you can hold don't down space and still jump
