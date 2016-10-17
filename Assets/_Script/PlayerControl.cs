@@ -51,7 +51,7 @@ public class PlayerControl : MonoBehaviour {
 		}
 		else{
 			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
-			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceModeImpulse);
+			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
 		}
 
 		//this is so you can hold don't down space and still jump
