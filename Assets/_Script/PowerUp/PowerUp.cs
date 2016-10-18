@@ -14,25 +14,29 @@ public class PowerUp : MonoBehaviour {
 
 	public float speedFactor;
 	public float jumpForceFactor;
+	public bool isActivate = true;
 
 	public bool _________________;
 
 	//protected float powerUpStartTime;
 
-	// Use this for initialization
+	void Start(){
+		this.gameObject.SetActive (isActivate);
+	}
 
 	void OnCollisionEnter(Collision other){
-		if (other.gameObject.tag == "Player" && PlayerControl.S.isPowerUp == false) {
-			enterPowerUp ();
+		if (other.gameObject.tag == "Player" && PlayerControl.S.isPowerUpMovingJumping == false) {
+			getPowerUp ();
 		}
 	}
 
-	public void enterPowerUp(){
-		PlayerControl.S.transform.FindChild ("Glow").gameObject.SetActive (true);
-		PlayerControl.S.powerUpStartTime = Time.time;
-		PlayerControl.S.isPowerUp = true;
-		PlayerControl.S.jumpspeed *= jumpForceFactor;
-		PlayerControl.S.speed *= speedFactor;
+	public void getPowerUp(){
+//		PlayerControl.S.transform.FindChild ("Glow").gameObject.SetActive (true);
+//		PlayerControl.S.powerUpStartTime = Time.time; 
+//		PlayerControl.S.isPowerUpMovingJumping = true;
+//		PlayerControl.S.jumpspeed *= jumpForceFactor;
+//		PlayerControl.S.speed *= speedFactor;
+		PlayerControl.S.numPowerUpMovingJumping += 1;
 		PlayerControl.S.speedFactor = speedFactor;
 		PlayerControl.S.jumpForceFactor = jumpForceFactor;
 		Destroy (this.gameObject);

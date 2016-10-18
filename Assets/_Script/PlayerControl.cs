@@ -15,11 +15,12 @@ public class PlayerControl : MonoBehaviour {
 	private float evilRadius;
 
 	//POWER_UP : These are variables for powerUp
-	public bool isPowerUp = false;
+	public bool isPowerUpMovingJumping = false;
 	public float powerUpStartTime;
 	public float powerUpDuration = 100f; // this may be more complicated later, but just assume a fixed duration first
 	public float speedFactor;
 	public float jumpForceFactor;
+	public int numPowerUpMovingJumping;
 
 	//EVIL:
 	private bool isBrokenByEvil;
@@ -33,6 +34,7 @@ public class PlayerControl : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
+		numPowerUpMovingJumping = 0;
 	}
 
 	void Start () {
@@ -81,7 +83,8 @@ public class PlayerControl : MonoBehaviour {
 			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
 		}
 
-		if (Input.GetKey (KeyCode.C)) {
+		// TEST_CHEAT 1
+		if (Input.GetKey (KeyCode.F4)) {
 			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 			if (sceneName == "_Scene_1_Begin") {
 				transform.position = new Vector3 (0, 21, 0);
@@ -100,18 +103,23 @@ public class PlayerControl : MonoBehaviour {
 		//jumping = false;
 
 		// POWER_UP : Add some additional Gravity when power up
-		if(isPowerUp){
-			rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
+//		if(isPowerUpMovingJumping){
+//			rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
+//		}
+		if(Input.GetKey(KeyCode.E) && numPowerUpMovingJumping > 0){
+			numPowerUpMovingJumping--;
+			enterPowerUp ();
 		}
 		// POWER_UP : Exit if time is up
-		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUp){
+		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping){
 			exitPowerUp ();	
 		}
+
 		//EVIL: 
 		this.transform.parent.FindChild("brokenPlayer").transform.position 
 			= this.gameObject.transform.position;
 		//TEST: this is just code for test
-		if(Input.GetKey(KeyCode.E)){
+		if(Input.GetKey(KeyCode.F3)){
 			evil.SetActive(true);
 			float _y = evil.gameObject.transform.position.y;
 			evil.transform.position = new Vector3 (this.gameObject.transform.position.x, 
@@ -125,6 +133,21 @@ public class PlayerControl : MonoBehaviour {
 				UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 			}
 		}
+
+		//TEST_CHEAT 2
+
+		if (Input.GetKey (KeyCode.F1)) {
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			if (sceneName == "_Scene_Custom") {
+				this.transform.parent.gameObject.transform.position = new Vector3 (75.53f, -38.74f, 79.8f);
+			}
+		} 
+		if (Input.GetKey (KeyCode.F2)) {
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			if (sceneName == "_Scene_Custom") {
+				this.transform.parent.gameObject.transform.position = new Vector3 (216.3f, -29.9f, 79.8f);
+			}
+		} 
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
@@ -160,11 +183,22 @@ public class PlayerControl : MonoBehaviour {
 
 	//POWER_UP : When power up exits
 	public void exitPowerUp(){
-		isPowerUp = false;
+		isPowerUpMovingJumping = false;
 		PlayerControl.S.jumpspeed /= jumpForceFactor;
 		PlayerControl.S.speed /= speedFactor;
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
+	}
+
+	//POWER_UP : When player chooses to use it
+	public void enterPowerUp(){
+		//rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
+		this.transform.FindChild ("Glow").gameObject.SetActive (true);
+		powerUpStartTime = Time.time; 
+		isPowerUpMovingJumping = true;
+		PlayerControl.S.jumpspeed *= jumpForceFactor;
+		PlayerControl.S.speed *= speedFactor;
+
 	}
 
 	public void BrokenByEnemy(Collision other){
@@ -184,3 +218,6 @@ public class PlayerControl : MonoBehaviour {
 		}
 	}
 }
+
+// 75.53, -38.74, 79.8
+// 216.3, -29.9, 79.8
