@@ -17,7 +17,7 @@ public class PlayerControl : MonoBehaviour {
 	//POWER_UP : These are variables for powerUp
 	public bool isPowerUpMovingJumping = false;
 	public float powerUpStartTime;
-	public float powerUpDuration = 100f; // this may be more complicated later, but just assume a fixed duration first
+	public float powerUpDuration = 1000f; // this may be more complicated later, but just assume a fixed duration first
 	public float speedFactor;
 	public float jumpForceFactor;
 	public int numPowerUpMovingJumping;
@@ -87,8 +87,9 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		if (!IsGrounded) {
+			print (rigid.velocity);
 			Vector3 vel = rigid.velocity;
-			vel.y-=BONUS_GRAV*Time.deltaTime;
+			vel.y-=BONUS_GRAV * Time.deltaTime;
 			rigid.velocity=vel;
 
 			//TO DO: figure out how to make this decrease forward force over time
