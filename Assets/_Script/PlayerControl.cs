@@ -64,6 +64,8 @@ public class PlayerControl : MonoBehaviour {
 				transform.position = new Vector3 (0f, 21f, 0f);
 			} else if (sceneName == "_Scene_1st_Level") {
 				transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
+			} else if (sceneName == "_Scene_Custom") {
+				transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
 			}
 			rigid.velocity = Vector3.zero;
 			rigid.angularVelocity = Vector3.zero; 
