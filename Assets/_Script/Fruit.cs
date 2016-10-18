@@ -35,6 +35,7 @@ public class Fruit : MonoBehaviour {
 	void OnTriggerEnter(Collider other){
 		Debug.Log ("Entre");
 		if (other.gameObject.tag == "Player") {
+			DisplayWhenPlaying.S.AddFruit();
 			Destroy (this.gameObject);
 		}
 	}

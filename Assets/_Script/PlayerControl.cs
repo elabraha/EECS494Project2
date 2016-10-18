@@ -31,14 +31,20 @@ public class PlayerControl : MonoBehaviour {
 	private const float BONUS_GRAV = 9.8f;
 	// Use this for initialization
 
+	// Fruit Counter and Timer
+	public int FruitNum;
+	public float CurrentTime;
+	public float LastStopTimePoint;
 	void Awake(){
 		S = this;
 		rigid = GetComponent<Rigidbody> ();
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
 		this.transform.FindChild ("Glow_weak").gameObject.SetActive (false);
-
 		numPowerUpMovingJumping = 0;
+		// Fruit Counter and Timer
+		FruitNum = 0;
+		LastStopTimePoint = 0f;
 	}
 
 	void Start () {
@@ -184,6 +190,9 @@ public class PlayerControl : MonoBehaviour {
 				this.transform.parent.gameObject.transform.position = new Vector3 (451.07f, 62f, 89.8f);
 			}
 		}
+
+		//Timer 
+		Time_update();
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
@@ -269,6 +278,10 @@ public class PlayerControl : MonoBehaviour {
 				rgd.velocity = new Vector3 (Random.value * 36f - 18f, Random.value, Random.value* 36f - 18f);
 			}
 		}
+	}
+
+	public void Time_update(){
+		CurrentTime = Time.time - LastStopTimePoint;
 	}
 }
 
