@@ -6,7 +6,7 @@ public class PlayerControl : MonoBehaviour {
 	private Rigidbody rigid;
 	public float speed = 200.0f;
 	public static PlayerControl S;
-	public float jumpspeed = 10000.0f;
+	public float jumpspeed = 15.0f;
 	public bool IsGrounded = true;
 	public bool canWin;
 
@@ -27,6 +27,8 @@ public class PlayerControl : MonoBehaviour {
 	private float brokenBegin;
 	private float brokenDuration = 2f;
 
+	bool jumWasPressed = false;
+	private const float BONUS_GRAV = 9.8f;
 	// Use this for initialization
 
 	void Awake(){
@@ -78,10 +80,30 @@ public class PlayerControl : MonoBehaviour {
 			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
 		}
 
-		if (Input.GetKeyDown (KeyCode.Space) && IsGrounded) {
-			Vector3 jump = Vector3.up;
-			rigid.AddForce (jump * jumpspeed * Time.deltaTime);
+		//this is so you can hold don't down space and still jump
+
+		if(Input.GetKeyUp(KeyCode.Space)) {
+			jumWasPressed = false;
 		}
+
+		if (!IsGrounded) {
+			Vector3 vel = rigid.velocity;
+			vel.y-=BONUS_GRAV*Time.deltaTime;
+			rigid.velocity=vel;
+
+			//TO DO: figure out how to make this decrease forward force over time
+		}
+
+		if(Input.GetKey (KeyCode.Space) && !IsGrounded) {
+			jumWasPressed = true;
+		}
+		//FIX ME: make jumps faster
+		if ((Input.GetKeyDown (KeyCode.Space) || jumWasPressed) && IsGrounded) {
+			print ("bang bang");
+			Vector3 jump = Vector3.up;
+			rigid.velocity += jump * jumpspeed;
+		}
+		//end jump code
 
 		// TEST_CHEAT 1
 		if (Input.GetKey (KeyCode.F4)) {
@@ -93,7 +115,7 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKey (KeyCode.D)) {
+		if (Input.GetKey (KeyCode.R)) {
 			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
 		}
 		if (Input.GetKey (KeyCode.F)) {
