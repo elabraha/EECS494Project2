@@ -4,6 +4,7 @@ using System.Collections;
 public class PowerUpwithTagetBall : MonoBehaviour {
 
 	public bool isleft = true;
+	public GameObject fruits;
 
 	void OnCollisionEnter(Collision other){
 		
@@ -13,6 +14,8 @@ public class PowerUpwithTagetBall : MonoBehaviour {
 			if (isleft && temp || !isleft && !temp) {
 				this.transform.parent.FindChild ("StarPowerUp").gameObject.SetActive (true);
 				this.transform.parent.FindChild ("StarPowerUp").gameObject.transform.position = this.transform.position;
+				fruits.SetActive (true);
+				//Finally set inactivate
 				this.gameObject.SetActive (false);
 			}
 		}

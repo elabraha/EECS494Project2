@@ -3,6 +3,7 @@ using System.Collections;
 
 public class BreakControl : MonoBehaviour {
 
+	public bool isBreak = false;
 	// Use this for initialization
 	void Start () {
 	
@@ -15,6 +16,7 @@ public class BreakControl : MonoBehaviour {
 
 	void OnCollisionEnter(Collision other){
 		if (other.gameObject.tag == "Player" || other.gameObject.tag == "Evil") {
+			isBreak = true;
 			this.transform.FindChild ("Cube").gameObject.SetActive (false);
 			Destroy (gameObject.GetComponent<BoxCollider> ());
 			foreach (Rigidbody rgd in gameObject.GetComponentsInChildren<Rigidbody>()) {

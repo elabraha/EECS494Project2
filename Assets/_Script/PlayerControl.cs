@@ -36,6 +36,8 @@ public class PlayerControl : MonoBehaviour {
 		rigid = GetComponent<Rigidbody> ();
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
+		this.transform.FindChild ("Glow_weak").gameObject.SetActive (false);
+
 		numPowerUpMovingJumping = 0;
 	}
 
@@ -87,7 +89,7 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		if (!IsGrounded) {
-			print (rigid.velocity);
+			//print (rigid.velocity);
 			Vector3 vel = rigid.velocity;
 			vel.y-=BONUS_GRAV * Time.deltaTime;
 			rigid.velocity=vel;
@@ -134,13 +136,14 @@ public class PlayerControl : MonoBehaviour {
 			enterPowerUp ();
 		}
 		// POWER_UP : Exit if time is up
-		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping){
+		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping && isPowerUpMovingJumping){
 			exitPowerUp ();	
 		}
 
 		//EVIL: 
 		this.transform.parent.FindChild("brokenPlayer").transform.position 
 			= this.gameObject.transform.position;
+
 		//TEST: this is just code for test
 		if(Input.GetKey(KeyCode.F3)){
 			evil.SetActive(true);
@@ -170,7 +173,15 @@ public class PlayerControl : MonoBehaviour {
 			if (sceneName == "_Scene_Custom") {
 				this.transform.parent.gameObject.transform.position = new Vector3 (216.3f, -29.9f, 79.8f);
 			}
-		} 
+		}
+
+		//Test_CHEAT 3
+		if (Input.GetKey (KeyCode.F5)) {
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			if (sceneName == "_Scene_Custom") {
+				this.transform.parent.gameObject.transform.position = new Vector3 (451.07f, 62f, 89.8f);
+			}
+		}
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
@@ -178,10 +189,11 @@ public class PlayerControl : MonoBehaviour {
 			Destroy (collisionInfo.gameObject);
 		}
 
-		if (collisionInfo.gameObject.tag == "Evil") {
+		if (collisionInfo.gameObject.tag == "Evil" 
+			&& this.transform.position.y < collisionInfo.gameObject.transform.position.y) {
 			brokenBegin = Time.time;
 			isBrokenByEvil = true;
-			BrokenByEnemy (collisionInfo);
+			BrokenByEvil (collisionInfo);
 		}
 	}
 
@@ -224,7 +236,23 @@ public class PlayerControl : MonoBehaviour {
 
 	}
 
-	public void BrokenByEnemy(Collision other){
+	//POWER_UP : When power up exits
+	public void exitWeakPowerUp(){
+		PlayerControl.S.jumpspeed /= 2f;
+		// POWER_UP : Set the Glowing object false
+		this.transform.FindChild ("Glow_weak").gameObject.SetActive (false);
+	}
+
+	//POWER_UP : When player chooses to use it
+	public void enterWeakPowerUp(){
+		//rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
+		this.transform.FindChild ("Glow_weak").gameObject.SetActive (true);
+		PlayerControl.S.jumpspeed *= 2f;
+	}
+
+
+
+	public void BrokenByEvil(Collision other){
 		if (other.gameObject.tag == "Evil" 
 			&& other.gameObject.transform.position.y > this.transform.position.y) {
 			float radius = evil.GetComponent<SphereCollider> ().radius;
