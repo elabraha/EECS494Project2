@@ -67,11 +67,23 @@ public class PlayerControl : MonoBehaviour {
 			
 			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 			if (sceneName == "_Scene_1_Begin") {
+				if (isPowerUpMovingJumping) {
+					exitPowerUp ();
+					++numPowerUpMovingJumping;
+				}
 				transform.position = new Vector3 (0f, 21f, 0f);
 			} else if (sceneName == "_Scene_1st_Level") {
 				transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
+				if (isPowerUpMovingJumping) {
+					exitPowerUp ();
+					++numPowerUpMovingJumping;
+				}
 			} else if (sceneName == "_Scene_Custom") {
 				transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
+				if (isPowerUpMovingJumping) {
+					exitPowerUp ();
+					++numPowerUpMovingJumping;
+				}
 			}
 			rigid.velocity = Vector3.zero;
 			rigid.angularVelocity = Vector3.zero; 
