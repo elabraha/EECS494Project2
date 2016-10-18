@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEditor;
+using System;
 
 /*
  * This is the very first version of Power up;
@@ -10,36 +12,66 @@ using System.Collections;
  * 
  */
 
+public enum PowerType {JUMP, BUBBLE}
+
+
 public class PowerUp : MonoBehaviour {
+	public Material mat;
 
 	public float speedFactor;
 	public float jumpForceFactor;
 	public bool isActivate = true;
+	public float bubbleJump;
+
+	public PowerType type; 
+
 
 	public bool _________________;
-
-	//protected float powerUpStartTime;
 
 	void Start(){
 		this.gameObject.SetActive (isActivate);
 	}
 
-	void OnCollisionEnter(Collision other){
-		if (other.gameObject.tag == "Player" && PlayerControl.S.isPowerUpMovingJumping == false) {
-			getPowerUp ();
-		}
+	public void SetType(PowerType absorb) {
+		this.type = absorb;
 	}
-
-	public void getPowerUp(){
-//		PlayerControl.S.transform.FindChild ("Glow").gameObject.SetActive (true);
-//		PlayerControl.S.powerUpStartTime = Time.time; 
-//		PlayerControl.S.isPowerUpMovingJumping = true;
-//		PlayerControl.S.jumpspeed *= jumpForceFactor;
-//		PlayerControl.S.speed *= speedFactor;
-		PlayerControl.S.numPowerUpMovingJumping += 1;
-		PlayerControl.S.speedFactor = speedFactor;
-		PlayerControl.S.jumpForceFactor = jumpForceFactor;
+		
+	public void enterPowerUp(){
+		//or set power up numbers in here
+		//print ("why?"); 
+		if (type == PowerType.JUMP) {
+			//		PlayerControl.S.transform.FindChild ("Glow").gameObject.SetActive (true);
+			//		PlayerControl.S.powerUpStartTime = Time.time; 
+			//		PlayerControl.S.isPowerUpMovingJumping = true;
+			//		PlayerControl.S.jumpspeed *= jumpForceFactor;
+			//		PlayerControl.S.speed *= speedFactor;
+			PlayerControl.S.numPowerUpMovingJumping += 1;
+			PlayerControl.S.speedFactor = speedFactor;
+			PlayerControl.S.jumpForceFactor = jumpForceFactor;
+		} else{
+			//else it's bubble for now
+//			Material mat = PlayerControl.S.GetComponent<Renderer> ().material;
+//			mat.SetFloat ("_Mode", 3.0f);
+			PlayerControl.S.isPowerUpMovingJumping = true;
+			PlayerControl.S.powerUpStartTime = Time.time;
+			PlayerControl.S.powerUpDuration = 500.0f; 
+			PlayerControl.S.GetComponent<Renderer> ().material = mat;
+			PlayerControl.S.bubbleJump = bubbleJump;
+			PlayerControl.S.rigid.drag = 1.0f;
+			float mass = PlayerControl.S.GetComponent <Rigidbody> ().mass;
+			mass = 0.5f;
+			PlayerControl.S.GetComponent <Rigidbody> ().mass = mass;
+			PlayerControl.S.rigid.velocity = Vector3.zero;
+			PlayerControl.S.rigid.angularVelocity = Vector3.zero;
+			PlayerControl.S.speed /= 20.0f;
+		}
 		Destroy (this.gameObject);
 	}
+		
+	void OnCollisionEnter(Collision other){
 
-}
+		if (other.gameObject.tag == "Player" && PlayerControl.S.isPowerUpMovingJumping == false) {
+			enterPowerUp ();
+		}
+	}
+}		

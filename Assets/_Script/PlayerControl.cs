@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+//using System;
 
 public class PlayerControl : MonoBehaviour {
 
-	private Rigidbody rigid;
+	public Rigidbody rigid;
 	public float speed = 200.0f;
 	public static PlayerControl S;
 	public float jumpspeed = 15.0f;
@@ -21,6 +22,7 @@ public class PlayerControl : MonoBehaviour {
 	public float speedFactor;
 	public float jumpForceFactor;
 	public int numPowerUpMovingJumping;
+	public float bubbleJump;
 
 	//EVIL:
 	private bool isBrokenByEvil;
@@ -29,6 +31,11 @@ public class PlayerControl : MonoBehaviour {
 
 	bool jumWasPressed = false;
 	private const float BONUS_GRAV = 9.8f;
+
+	public PowerType powerup;
+
+	Vector3 restartPos;
+	Material mat;
 	// Use this for initialization
 
 	// Fruit Counter and Timer
@@ -53,38 +60,50 @@ public class PlayerControl : MonoBehaviour {
 		evilRadius = evil.GetComponent<SphereCollider> ().radius;
 		this.transform.parent.FindChild ("brokenPlayer").gameObject.SetActive (false);
 		isBrokenByEvil = false;
+		restartPos = transform.position;
+		rigid.velocity = Vector3.zero;
+		rigid.angularVelocity = Vector3.zero;
+		restartPos = transform.position;
+		mat = PlayerControl.S.GetComponent<Renderer> ().material;
 	}
 
 	void FixedUpdate () {
-		float moveHorizontal = Input.GetAxis("Horizontal");
-		float moveVertical = Input.GetAxis ("Vertical");
+		float moveHorizontal = Input.GetAxisRaw ("Horizontal");
+		float moveVertical = Input.GetAxisRaw ("Vertical");
 		//float jump = Input.GetAxis("Vertical");
 
 		//what part is jump depends on the gravity lock
 
 		//print (rigid); 
-		if (transform.position.y <= -100) {
-			
+		if (transform.position.y <= -100) { //TODO: Make this restart to the right start point by collision
+
 			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 			if (sceneName == "_Scene_1_Begin") {
 				if (isPowerUpMovingJumping) {
 					exitPowerUp ();
 					++numPowerUpMovingJumping;
 				}
-				transform.position = new Vector3 (0f, 21f, 0f);
+				//transform.position = new Vector3 (0f, 21f, 0f);
 			} else if (sceneName == "_Scene_1st_Level") {
-				transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
+				//transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
 				if (isPowerUpMovingJumping) {
 					exitPowerUp ();
 					++numPowerUpMovingJumping;
 				}
 			} else if (sceneName == "_Scene_Custom") {
-				transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
+				//transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
 				if (isPowerUpMovingJumping) {
 					exitPowerUp ();
 					++numPowerUpMovingJumping;
 				}
 			}
+//			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+//			if (sceneName == "_Scene_1_Begin") {
+//				transform.position = new Vector3 (0f, 21f, 0f);
+//			} else if (sceneName == "_Scene_1st_Level") {
+//				transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
+//			}
+			transform.position = restartPos;
 			rigid.velocity = Vector3.zero;
 			rigid.angularVelocity = Vector3.zero; 
 		}
@@ -93,6 +112,8 @@ public class PlayerControl : MonoBehaviour {
 		Vector3 movementVertical = new Vector3(0.0f, 0.0f, moveVertical);
 
 		//print (movement);
+		//TO DO: figure out how to use velocity instead. remember if I use velocity then must change
+		//firction of material because it migth weird
 		if(Input.GetKey(KeyCode.LeftShift)){
 			rigid.velocity = Vector3.zero;
 			rigid.angularVelocity = Vector3.zero;
@@ -103,30 +124,50 @@ public class PlayerControl : MonoBehaviour {
 		}
 
 		//this is so you can hold don't down space and still jump
+		if(!isPowerUpMovingJumping || (powerup == PowerType.JUMP && powerup != PowerType.BUBBLE )) {
+//			print("you should not be here if bubble");
+//			print (powerup); 
+			if(Input.GetKeyUp(KeyCode.Space)) {
+				jumWasPressed = false;
+			}
+				
+			if(Input.GetKeyUp(KeyCode.Space)) {
+				jumWasPressed = false;
+			}
 
-		if(Input.GetKeyUp(KeyCode.Space)) {
-			jumWasPressed = false;
-		}
+			if (!IsGrounded) {
+				//print (rigid.velocity);
+				Vector3 vel = rigid.velocity;
+				vel.y-=BONUS_GRAV * Time.deltaTime;
+				rigid.velocity=vel;
 
-		if (!IsGrounded) {
-			//print (rigid.velocity);
-			Vector3 vel = rigid.velocity;
-			vel.y-=BONUS_GRAV * Time.deltaTime;
-			rigid.velocity=vel;
 
-			//TO DO: figure out how to make this decrease forward force over time
-		}
+					//TO DO: figure out how to make this decrease forward force over time
+			}
+				
 
-		if(Input.GetKey (KeyCode.Space) && !IsGrounded) {
-			jumWasPressed = true;
+			if(Input.GetKey (KeyCode.Space) && !IsGrounded) {
+				jumWasPressed = true;
+			}
+			//FIX ME: make jumps faster
+			if ((Input.GetKeyDown (KeyCode.Space) || jumWasPressed) && IsGrounded) {
+//				print ("bang bang");
+				Vector3 jump = Vector3.up;
+				rigid.velocity += jump * jumpspeed;
+			}
+			//end jump code
 		}
-		//FIX ME: make jumps faster
-		if ((Input.GetKeyDown (KeyCode.Space) || jumWasPressed) && IsGrounded) {
-			print ("bang bang");
-			Vector3 jump = Vector3.up;
-			rigid.velocity += jump * jumpspeed;
+		if (powerup == PowerType.BUBBLE) {
+			if (!IsGrounded) {
+				Vector3 vel = rigid.velocity;
+				vel.y-=BONUS_GRAV*Time.deltaTime;
+				rigid.velocity=vel;
+			}
+			if(Input.GetKeyUp(KeyCode.Space)) {
+				Vector3 jump = Vector3.up;
+				rigid.AddForce(jump * bubbleJump);
+			}
 		}
-		//end jump code
 
 		// TEST_CHEAT 1
 		if (Input.GetKey (KeyCode.F4)) {
@@ -145,16 +186,14 @@ public class PlayerControl : MonoBehaviour {
 			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
 		}
 
-		//jumping = false;
-
+		//TO DO: add a way to do this without doing it directly in here. Also just fix gravity and velocity increases in general
 		// POWER_UP : Add some additional Gravity when power up
-//		if(isPowerUpMovingJumping){
-//			rigid.AddForce(Vector3.down * rigid.mass * 9.8f, ForceMode.Force);
-//		}
+
 		if(Input.GetKey(KeyCode.E) && numPowerUpMovingJumping > 0){
 			numPowerUpMovingJumping--;
 			enterPowerUp ();
 		}
+			
 		// POWER_UP : Exit if time is up
 		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping && isPowerUpMovingJumping){
 			exitPowerUp ();	
@@ -208,6 +247,18 @@ public class PlayerControl : MonoBehaviour {
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {
+		if (isPowerUpMovingJumping && powerup == PowerType.BUBBLE) {
+			if (collisionInfo.gameObject.tag == "Fruit") {
+				Destroy (collisionInfo.gameObject);
+			} 
+			if (collisionInfo.gameObject.tag == "Floor") {
+				//just do nothing
+			} else {
+				//everything destroys bubble for now except wind if I add it.
+				Start();
+			}
+			return;
+		}
 		if (collisionInfo.gameObject.tag == "Fruit") {
 			Destroy (collisionInfo.gameObject);
 		}
@@ -218,6 +269,7 @@ public class PlayerControl : MonoBehaviour {
 			isBrokenByEvil = true;
 			BrokenByEvil (collisionInfo);
 		}
+			
 	}
 
 	void OnCollisionStay (Collision collisionInfo)
@@ -234,6 +286,30 @@ public class PlayerControl : MonoBehaviour {
 		}
 	}
 
+	void OnTriggerEnter(Collider coll) {
+		if (coll.gameObject.tag == "CheckPoint") {
+			restartPos = coll.gameObject.transform.GetChild(0).position + Vector3.up;
+		}
+		if (coll.gameObject.tag == "Fan") {
+			print ("fan zone"); 
+			float addon = 1.0f;
+			if (rigid.mass < 1.0f) {
+				addon = 0.2f;
+			}
+			rigid.AddForce(17000000.0f * addon * coll.gameObject.transform.forward, ForceMode.Force);
+		}
+	}
+
+//	void OnTriggerStay(Collider coll) {
+//		
+//
+//	}
+	void OnTriggerExit(Collider coll) {
+		if (coll.gameObject.tag == "Fan") {
+			print ("out the zone");
+		}
+	}
+
 	//Here is some public/private functions 
 	public Rigidbody getRigidBody(){
 		return rigid;
@@ -241,11 +317,20 @@ public class PlayerControl : MonoBehaviour {
 
 	//POWER_UP : When power up exits
 	public void exitPowerUp(){
-		isPowerUpMovingJumping = false;
-		PlayerControl.S.jumpspeed /= jumpForceFactor;
-		PlayerControl.S.speed /= speedFactor;
-		// POWER_UP : Set the Glowing object false
-		this.transform.FindChild ("Glow").gameObject.SetActive (false);
+		if (powerup == PowerType.JUMP) {
+			PlayerControl.S.isPowerUpMovingJumping = false;
+			PlayerControl.S.jumpspeed /= jumpForceFactor;
+			PlayerControl.S.speed /= speedFactor;
+			// POWER_UP : Set the Glowing object false
+			this.transform.FindChild ("Glow").gameObject.SetActive (false);
+		} else {
+			//do bubble shit
+			//return mode
+			rigid.mass = 10.0f;
+			this.gameObject.GetComponent<Rigidbody> ().mass = 10.0f;
+			PlayerControl.S.GetComponent<Renderer> ().material = mat;
+			rigid.drag = 0.0f;
+		}
 	}
 
 	//POWER_UP : When player chooses to use it
