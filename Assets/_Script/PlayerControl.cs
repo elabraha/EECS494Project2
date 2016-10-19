@@ -159,8 +159,10 @@ public class PlayerControl : MonoBehaviour {
 			UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 		}
 
-		Vector3 movementHorizontal = new Vector3(moveHorizontal, 0.0f, 0.0f);
-		Vector3 movementVertical = new Vector3(0.0f, 0.0f, moveVertical);
+//		Vector3 movementHorizontal = new Vector3(moveHorizontal, 0.0f, 0.0f);
+//		Vector3 movementVertical = new Vector3(0.0f, 0.0f, moveVertical);
+		Vector3 movement = new Vector3(moveHorizontal, 0.0f,  moveVertical);
+		movement = Camera.main.transform.TransformDirection(movement);
 
 		//print (movement);
 		//TO DO: figure out how to use velocity instead. remember if I use velocity then must change
@@ -170,8 +172,9 @@ public class PlayerControl : MonoBehaviour {
 			rigid.angularVelocity = Vector3.zero;
 		}
 		else{
-			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
-			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
+//			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
+//			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
+			rigid.AddForce (movement * speed * Time.deltaTime, ForceMode.Impulse);
 		}
 
 		//this is so you can hold don't down space and still jump

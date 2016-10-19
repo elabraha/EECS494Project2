@@ -47,6 +47,7 @@ public class PowerUp : MonoBehaviour {
 			//		PlayerControl.S.isPowerUpMovingJumping = true;
 			//		PlayerControl.S.jumpspeed *= jumpForceFactor;
 			//		PlayerControl.S.speed *= speedFactor;
+			PlayerControl.S.isPowerUpMovingJumping = true;
 			PlayerControl.S.numPowerUpMovingJumping += 1;
 			PlayerControl.S.speedFactor = speedFactor;
 			PlayerControl.S.powerUpDuration = 20.0f; 
