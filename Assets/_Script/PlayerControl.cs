@@ -253,6 +253,12 @@ public class PlayerControl : MonoBehaviour {
 			} 
 			if (collisionInfo.gameObject.tag == "Floor") {
 				//just do nothing
+			} else if (collisionInfo.gameObject.tag == "GravityTube") {
+				//nothing
+			} else if (collisionInfo.gameObject.tag == "CheckPoint") {
+				//nothing
+			} else if (collisionInfo.gameObject.tag == "Finish") {
+				//nothing
 			} else {
 				//everything destroys bubble for now except wind if I add it.
 				Start();

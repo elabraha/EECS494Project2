@@ -5,6 +5,7 @@ using System.Collections;
 public class MovingBoard : MonoBehaviour {
 
 	public Quaternion		movingDirection = Quaternion.Euler(0,0,0);
+	public Vector3 			direction;
 	public float 			movingSpeed = 2f;
 	public float 			movingRadius = 5f;
 	public bool				isRight = true;
@@ -22,9 +23,9 @@ public class MovingBoard : MonoBehaviour {
 		startPoint = gameObject.transform.position;
 		isGoBack = false;
 		if (isRight == true) {
-			directionCheck = movingDirection * Vector3.right;
+			directionCheck = movingDirection * direction;
 		} else {
-			directionCheck = movingDirection * Vector3.left;
+			directionCheck = movingDirection * direction;
 		}
 		if (!isActive) {
 			gameObject.SetActive (false);
