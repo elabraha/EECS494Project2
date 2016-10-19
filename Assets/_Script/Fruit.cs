@@ -28,7 +28,7 @@ public class Fruit : MonoBehaviour {
 			//Debug.Log (this.transform.position.y);
 			//Debug.Log (PlayerControl.S.transform.position.y);
 			isFall = false;
-			Debug.Log (isFall);
+			//Debug.Log (isFall);
 		}
 	}
 

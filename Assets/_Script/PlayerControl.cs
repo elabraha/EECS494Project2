@@ -18,7 +18,7 @@ public class PlayerControl : MonoBehaviour {
 	//POWER_UP : These are variables for powerUp
 	public bool isPowerUpMovingJumping = false;
 	public float powerUpStartTime;
-	public float powerUpDuration = 1000f; // this may be more complicated later, but just assume a fixed duration first
+	public float powerUpDuration = 10.0f; // this may be more complicated later, but just assume a fixed duration first
 	public float speedFactor;
 	public float jumpForceFactor;
 	public int numPowerUpMovingJumping;
@@ -42,13 +42,36 @@ public class PlayerControl : MonoBehaviour {
 	public int FruitNum;
 	public float CurrentTime;
 	public float LastStopTimePoint;
+
 	void Awake(){
-		S = this;
+//		if (S == null)
+//		{
+//			DontDestroyOnLoad(this);
+//			S = this;
+////			PlayerPrefs.SetFloat("PlayerX", transform.position.x);
+////			PlayerPrefs.SetFloat("PlayerY", transform.position.y);
+////			PlayerPrefs.SetFloat("PlayerZ", transform.position.z);
+//		}
+//		else if (S != this)
+//		{
+//			Destroy (this);
+//			return;
+//		}
+		if (S == null) {
+			S = this;
+		} else {
+			Debug.Log ("two players");
+			return;
+		}
 		rigid = GetComponent<Rigidbody> ();
 		// POWER_UP : Set the Glowing object false
 		this.transform.FindChild ("Glow").gameObject.SetActive (false);
 		this.transform.FindChild ("Glow_weak").gameObject.SetActive (false);
 		numPowerUpMovingJumping = 0;
+		restartPos = transform.position;
+		rigid.velocity = Vector3.zero;
+		rigid.angularVelocity = Vector3.zero;
+		print ("position" + restartPos);
 		// Fruit Counter and Timer
 		FruitNum = 0;
 		LastStopTimePoint = 0f;
@@ -60,16 +83,30 @@ public class PlayerControl : MonoBehaviour {
 		evilRadius = evil.GetComponent<SphereCollider> ().radius;
 		this.transform.parent.FindChild ("brokenPlayer").gameObject.SetActive (false);
 		isBrokenByEvil = false;
-		restartPos = transform.position;
+		isPowerUpMovingJumping = false;
+		//restartPos = transform.position;
 		rigid.velocity = Vector3.zero;
 		rigid.angularVelocity = Vector3.zero;
-		restartPos = transform.position;
-		mat = PlayerControl.S.GetComponent<Renderer> ().material;
-		PlayerControl.S.LastStopTimePoint = Time.time;
-		PlayerControl.S.CurrentTime = Time.time;
-		FruitNum = 0;
+
+		if (PlayerPrefs.HasKey ("PlayerX")) {
+
+			Vector3 newPosition = new Vector3 (0, 0, 0);
+			newPosition.x = PlayerPrefs.GetFloat ("PlayerX");
+			newPosition.y = PlayerPrefs.GetFloat ("PlayerY");
+			newPosition.z = PlayerPrefs.GetFloat ("PlayerZ");
+			restartPos = newPosition;
+		}
+
+		transform.position = restartPos;
+		PlayerPrefs.SetFloat("PlayerX", transform.position.x);
+		PlayerPrefs.SetFloat("PlayerY", transform.position.y);
+		PlayerPrefs.SetFloat("PlayerZ", transform.position.z);
+		print ("position" + restartPos);
+
+		mat = GetComponent<Renderer> ().material;
 		LastStopTimePoint = Time.time;
 		CurrentTime = Time.time;
+		FruitNum = 0;
 	}
 
 	void FixedUpdate () {
@@ -82,25 +119,30 @@ public class PlayerControl : MonoBehaviour {
 		//print (rigid); 
 		if (transform.position.y <= -100) { //TODO: Make this restart to the right start point by collision
 
-			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
-			if (sceneName == "_Scene_1_Begin") {
-				if (isPowerUpMovingJumping) {
-					exitPowerUp ();
-					++numPowerUpMovingJumping;
-				}
-				//transform.position = new Vector3 (0f, 21f, 0f);
-			} else if (sceneName == "_Scene_1st_Level") {
-				//transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
-				if (isPowerUpMovingJumping) {
-					exitPowerUp ();
-					++numPowerUpMovingJumping;
-				}
-			} else if (sceneName == "_Scene_Custom") {
-				//transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
-				if (isPowerUpMovingJumping) {
-					exitPowerUp ();
-					++numPowerUpMovingJumping;
-				}
+//			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+//			if (sceneName == "_Scene_1_Begin") {
+//				if (isPowerUpMovingJumping) {
+//					exitPowerUp ();
+//					++numPowerUpMovingJumping;
+//				}
+//				//transform.position = new Vector3 (0f, 21f, 0f);
+//			} else if (sceneName == "_Scene_1st_Level") {
+//				//transform.position = new Vector3 (0.0f, 1.2f, -20.9f);
+//				if (isPowerUpMovingJumping) {
+//					exitPowerUp ();
+//					++numPowerUpMovingJumping;
+//				}
+//			} else if (sceneName == "_Scene_Custom") {
+//				//transform.position = new Vector3 (0.0f, 2.2f, -18.7f);
+//				if (isPowerUpMovingJumping) {
+//					exitPowerUp ();
+//					++numPowerUpMovingJumping;
+//				}
+//			}
+
+			if (isPowerUpMovingJumping) {
+				exitPowerUp ();
+				++numPowerUpMovingJumping;
 			}
 //			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 //			if (sceneName == "_Scene_1_Begin") {
@@ -110,7 +152,11 @@ public class PlayerControl : MonoBehaviour {
 //			}
 			transform.position = restartPos;
 			rigid.velocity = Vector3.zero;
-			rigid.angularVelocity = Vector3.zero; 
+			rigid.angularVelocity = Vector3.zero;
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			//DontDestroyOnLoad (this);
+			PlayerPrefs.Save ();
+			UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 		}
 
 		Vector3 movementHorizontal = new Vector3(moveHorizontal, 0.0f, 0.0f);
@@ -184,12 +230,12 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
-		if (Input.GetKey (KeyCode.R)) {
-			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
-		}
-		if (Input.GetKey (KeyCode.F)) {
-			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
-		}
+//		if (Input.GetKey (KeyCode.R)) {
+//			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
+//		}
+//		if (Input.GetKey (KeyCode.F)) {
+//			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
+//		}
 
 		//TO DO: add a way to do this without doing it directly in here. Also just fix gravity and velocity increases in general
 		// POWER_UP : Add some additional Gravity when power up
@@ -200,7 +246,7 @@ public class PlayerControl : MonoBehaviour {
 		}
 			
 		// POWER_UP : Exit if time is up
-		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping && isPowerUpMovingJumping){
+		if(Time.time - powerUpStartTime > powerUpDuration && isPowerUpMovingJumping){
 			exitPowerUp ();	
 		}
 
@@ -220,6 +266,8 @@ public class PlayerControl : MonoBehaviour {
 			this.transform.position = evil.transform.position - new Vector3(0f, evilRadius * 20f, 0f);
 			if (Time.time - brokenBegin > brokenDuration) {
 				string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+				//DontDestroyOnLoad (this);
+				PlayerPrefs.Save ();
 				UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 			}
 		}
@@ -268,9 +316,17 @@ public class PlayerControl : MonoBehaviour {
 
 		//LEVEL CONTROL
 		if(Input.GetKey(KeyCode.Alpha1)){
+			PlayerPrefs.DeleteAll ();
 			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
 		}else if(Input.GetKey(KeyCode.Alpha2)){
+			PlayerPrefs.DeleteAll ();
 			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_Custom");
+		} else if(Input.GetKey(KeyCode.Alpha3)) {
+			PlayerPrefs.DeleteAll ();
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_Custom_Level_2");
+		} else if(Input.GetKey(KeyCode.Alpha4)){
+			PlayerPrefs.DeleteAll ();
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
 		}
 	}
 
@@ -289,7 +345,11 @@ public class PlayerControl : MonoBehaviour {
 				//nothing
 			} else {
 				//everything destroys bubble for now except wind if I add it.
-				Start();
+				print ("restartbubble"); 
+				//Start();
+				string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+				//DontDestroyOnLoad (this);
+				UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 			}
 			return;
 		}
@@ -302,6 +362,14 @@ public class PlayerControl : MonoBehaviour {
 			brokenBegin = Time.time;
 			isBrokenByEvil = true;
 			BrokenByEvil (collisionInfo);
+		}
+		if (collisionInfo.gameObject.tag == "Projectile") {
+			float magnitude = 5000f;
+			Vector3 back_force_vec = transform.position = collisionInfo.gameObject.transform.position;
+			back_force_vec.Normalize ();
+			rigid.AddForce (back_force_vec * magnitude);
+			collisionInfo.gameObject.GetComponent<Rigidbody> ().AddForce (back_force_vec * magnitude);
+
 		}
 			
 	}
@@ -323,6 +391,10 @@ public class PlayerControl : MonoBehaviour {
 	void OnTriggerEnter(Collider coll) {
 		if (coll.gameObject.tag == "CheckPoint") {
 			restartPos = coll.gameObject.transform.GetChild(0).position + Vector3.up;
+			PlayerPrefs.SetFloat("PlayerX", restartPos.x);
+			PlayerPrefs.SetFloat("PlayerY", restartPos.y);
+			PlayerPrefs.SetFloat("PlayerZ", restartPos.z);
+			print ("checkpoint" + restartPos); 
 		}
 		if (coll.gameObject.tag == "Fan") {
 			print ("fan zone"); 
@@ -360,6 +432,8 @@ public class PlayerControl : MonoBehaviour {
 		} else {
 			//do bubble shit
 			//return mode
+			print ("hey there"); 
+			PlayerControl.S.isPowerUpMovingJumping = false;
 			rigid.mass = 10.0f;
 			this.gameObject.GetComponent<Rigidbody> ().mass = 10.0f;
 			PlayerControl.S.GetComponent<Renderer> ().material = mat;

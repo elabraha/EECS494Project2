@@ -49,6 +49,7 @@ public class PowerUp : MonoBehaviour {
 			//		PlayerControl.S.speed *= speedFactor;
 			PlayerControl.S.numPowerUpMovingJumping += 1;
 			PlayerControl.S.speedFactor = speedFactor;
+			PlayerControl.S.powerUpDuration = 20.0f; 
 			PlayerControl.S.jumpForceFactor = jumpForceFactor;
 		} else{
 			//else it's bubble for now
@@ -56,7 +57,7 @@ public class PowerUp : MonoBehaviour {
 //			mat.SetFloat ("_Mode", 3.0f);
 			PlayerControl.S.isPowerUpMovingJumping = true;
 			PlayerControl.S.powerUpStartTime = Time.time;
-			PlayerControl.S.powerUpDuration = 500.0f; 
+			PlayerControl.S.powerUpDuration = 50.0f; 
 			PlayerControl.S.GetComponent<Renderer> ().material = mat;
 			PlayerControl.S.bubbleJump = bubbleJump;
 			PlayerControl.S.rigid.drag = 1.0f;
@@ -71,9 +72,12 @@ public class PowerUp : MonoBehaviour {
 	}
 		
 	void OnCollisionEnter(Collision other){
-
+		
 		if (other.gameObject.tag == "Player" && PlayerControl.S.isPowerUpMovingJumping == false) {
+			PlayerControl.S.powerup = type;
 			enterPowerUp ();
+		} else {
+			Destroy (this.gameObject);
 		}
 	}
 }		
