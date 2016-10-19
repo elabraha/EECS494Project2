@@ -65,6 +65,11 @@ public class PlayerControl : MonoBehaviour {
 		rigid.angularVelocity = Vector3.zero;
 		restartPos = transform.position;
 		mat = PlayerControl.S.GetComponent<Renderer> ().material;
+		PlayerControl.S.LastStopTimePoint = Time.time;
+		PlayerControl.S.CurrentTime = Time.time;
+		FruitNum = 0;
+		LastStopTimePoint = Time.time;
+		CurrentTime = Time.time;
 	}
 
 	void FixedUpdate () {
@@ -242,8 +247,23 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
+		if(Input.GetKey(KeyCode.F6)){
+			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
+			if (sceneName == "_Scene_Custom") {
+				//GameObject.Find ("AppearingFinish").gameObject.SetActive (true);
+				this.transform.parent.gameObject.transform.position = new Vector3 (538f, 62f, 171.92f);
+			}
+		}
+
 		//Timer 
 		Time_update();
+
+		//LEVEL CONTROL
+		if(Input.GetKey(KeyCode.Alpha1)){
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1_Begin");
+		}else if(Input.GetKey(KeyCode.Alpha2)){
+			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_Custom");
+		}
 	}
 
 	void OnCollisionEnter(Collision collisionInfo) {

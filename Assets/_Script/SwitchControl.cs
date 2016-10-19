@@ -18,8 +18,11 @@ public class SwitchControl : MonoBehaviour {
 	
 	}
 
-	void OnTriggerEnter(Collider other){
+	void OnCollisionEnter(Collision other){
+		Debug.Log ("IS WORKING");
+		Debug.Log (other.gameObject.tag);
 		if (other.gameObject.tag == "Player") {
+			Debug.Log ("IS WORKING");
 			showBridge ();
 		}
 	}

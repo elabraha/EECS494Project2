@@ -1,25 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WinnerStage : MonoBehaviour {
+public class WinStageNew : MonoBehaviour {
+
 	//public bool canWin = false;
-	public static WinnerStage S;
+	public static WinStageNew S;
+
 	// Use this for initialization
 	void Start () {
 		S = this;
+
 	}
-	
+
 	// Update is called once per frame
 	void FixedUpdate () {
 
 	}
 
-	void OnTriggerEnter(Collider other){
+	void OnCollisionEnter(Collision other){
 		// Do something to show the player passes the instruction level
 		//Debug.Log("Player Win the instruction level!");
-//		if (canWin && other.gameObject.tag == "Player") {
-//			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
-//		}
+		//		if (canWin && other.gameObject.tag == "Player") {
+		//			UnityEngine.SceneManagement.SceneManager.LoadScene ("_Scene_1st_Level");
+		//		}
 		if (other.gameObject.tag == "Player") {
 			DataControl.S.gameObject.SetActive (true);
 			DisplayWhenPlaying.S.transform.FindChild ("Timer").gameObject.SetActive (false);
