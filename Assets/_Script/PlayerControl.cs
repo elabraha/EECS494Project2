@@ -53,7 +53,7 @@ public class PlayerControl : MonoBehaviour {
 		restartPos = transform.position;
 		rigid.velocity = Vector3.zero;
 		rigid.angularVelocity = Vector3.zero;
-		transform.position = restartPos;
+		restartPos = transform.position;
 		mat = PlayerControl.S.GetComponent<Renderer> ().material;
 	}
 
