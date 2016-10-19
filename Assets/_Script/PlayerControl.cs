@@ -255,6 +255,14 @@ public class PlayerControl : MonoBehaviour {
 			}
 		}
 
+		if (Input.GetKey (KeyCode.F12)) {
+			transform.position = new Vector3 (511.7f, 99.4f, 139.8f);
+		}
+
+		if (Input.GetKey (KeyCode.F7)) {
+			transform.position = new Vector3 (146.45f, -52.9f, 77.65f);
+		}
+
 		//Timer 
 		Time_update();
 
@@ -273,6 +281,12 @@ public class PlayerControl : MonoBehaviour {
 			} 
 			if (collisionInfo.gameObject.tag == "Floor") {
 				//just do nothing
+			} else if (collisionInfo.gameObject.tag == "GravityTube") {
+				//nothing
+			} else if (collisionInfo.gameObject.tag == "CheckPoint") {
+				//nothing
+			} else if (collisionInfo.gameObject.tag == "Finish") {
+				//nothing
 			} else {
 				//everything destroys bubble for now except wind if I add it.
 				Start();
