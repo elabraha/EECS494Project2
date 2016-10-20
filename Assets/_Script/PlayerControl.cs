@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 //using System;
+using System.Collections.Specialized;
 
 public class PlayerControl : MonoBehaviour {
 
@@ -104,8 +105,13 @@ public class PlayerControl : MonoBehaviour {
 		print ("position" + restartPos);
 
 		mat = GetComponent<Renderer> ().material;
-		LastStopTimePoint = Time.time;
-		CurrentTime = Time.time;
+		if (PlayerPrefs.HasKey ("Timer")) {
+			LastStopTimePoint = PlayerPrefs.GetFloat ("Timer");
+			CurrentTime = PlayerPrefs.GetFloat ("Timer");
+		} else {
+			LastStopTimePoint = Time.time;
+			CurrentTime = Time.time;
+		}
 		FruitNum = 0;
 	}
 
@@ -155,6 +161,7 @@ public class PlayerControl : MonoBehaviour {
 			rigid.angularVelocity = Vector3.zero;
 			string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 			//DontDestroyOnLoad (this);
+			PlayerPrefs.SetFloat("Timer", CurrentTime);
 			PlayerPrefs.Save ();
 			UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 		}
@@ -163,6 +170,11 @@ public class PlayerControl : MonoBehaviour {
 //		Vector3 movementVertical = new Vector3(0.0f, 0.0f, moveVertical);
 		Vector3 movement = new Vector3(moveHorizontal, 0.0f,  moveVertical);
 		movement = Camera.main.transform.TransformDirection(movement);
+		if (movement.y > 0.0f || movement.y < 0.0f ) {
+			movement.y = 0.0f;
+			movement.z = moveVertical;
+			print ("in here"); 
+		}
 
 		//print (movement);
 		//TO DO: figure out how to use velocity instead. remember if I use velocity then must change
@@ -170,11 +182,15 @@ public class PlayerControl : MonoBehaviour {
 		if(Input.GetKey(KeyCode.LeftShift)){
 			rigid.velocity = Vector3.zero;
 			rigid.angularVelocity = Vector3.zero;
-		}
-		else{
+		} if (!IsGrounded) {
+			//rigid.velocity = movement * speed * Time.deltaTime;
+			print ("z formation" + movement.z); 
+			rigid.AddForce (movement * speed * Time.deltaTime, ForceMode.Impulse);
+
+		} else{
 //			rigid.AddForce(movementHorizontal * speed * Time.deltaTime, ForceMode.Impulse);
 //			rigid.AddForce(movementVertical * speed * Time.deltaTime, ForceMode.Impulse);
-			rigid.AddForce (movement * speed * Time.deltaTime, ForceMode.Impulse);
+			rigid.AddForce (movement * speed);
 		}
 
 		//this is so you can hold don't down space and still jump
@@ -270,6 +286,7 @@ public class PlayerControl : MonoBehaviour {
 			if (Time.time - brokenBegin > brokenDuration) {
 				string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene ().name;
 				//DontDestroyOnLoad (this);
+				PlayerPrefs.SetFloat("Timer", CurrentTime);
 				PlayerPrefs.Save ();
 				UnityEngine.SceneManagement.SceneManager.LoadScene (sceneName);
 			}

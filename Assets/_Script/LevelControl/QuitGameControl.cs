@@ -5,6 +5,7 @@ public class QuitGameControl : MonoBehaviour {
 
 	public void ClickTest(){
 		// your code goes here
+		PlayerPrefs.DeleteAll ();
 		Application.Quit();
 	}
 

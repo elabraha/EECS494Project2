@@ -67,7 +67,7 @@ public class PowerUp : MonoBehaviour {
 			PlayerControl.S.GetComponent <Rigidbody> ().mass = mass;
 			PlayerControl.S.rigid.velocity = Vector3.zero;
 			PlayerControl.S.rigid.angularVelocity = Vector3.zero;
-			PlayerControl.S.speed /= 20.0f;
+			PlayerControl.S.speed /= 10.0f;
 		}
 		Destroy (this.gameObject);
 	}
@@ -78,7 +78,7 @@ public class PowerUp : MonoBehaviour {
 			PlayerControl.S.powerup = type;
 			enterPowerUp ();
 		} else {
-			Destroy (this.gameObject);
+			//Destroy (this.gameObject);
 		}
 	}
 }		
